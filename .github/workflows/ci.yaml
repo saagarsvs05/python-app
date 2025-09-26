@@ -12,6 +12,12 @@ jobs:
   docker:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up short SHA
+        id: vars
+        run: echo "SHORT_SHA=$(echo ${GITHUB_SHA} | cut -c1-6)" >> $GITHUB_OUTPUT
       -
         name: Login to Docker Hub
         uses: docker/login-action@v3
@@ -23,4 +29,6 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: true
-          tags: saagarsvs/python-app:${GITHUB_SHA::6}
+          tags: |
+            saagarsvs/python-app:latest
+            saagarsvs/python-app:${{ steps.vars.outputs.SHORT_SHA }}
