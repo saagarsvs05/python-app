@@ -1,4 +1,4 @@
-name: ci
+name: cicicd
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
 
 
 jobs:
-  docker:
+  ci:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -32,3 +32,13 @@ jobs:
           tags: |
             saagarsvs/python-app:latest
             saagarsvs/python-app:${{ steps.vars.outputs.SHORT_SHA }}
+  cd:
+    runs-on: self-hosted
+    steps:
+
+      - name: Argocd app sync
+        shell: bash
+        run: |
+          argocd login argocd.test.com --password ${{ secrets.ARGOCD_PASSWORD }} --username {{ var.ARGOCD_USERNAME }} --insecure
+          argocd app sync python-app1
+          
